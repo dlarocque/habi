@@ -23,4 +23,5 @@ $ habi view stretching  # view history of your stretching habit
 ```
 
 ## Authors
+
 Daniel La Rocque
