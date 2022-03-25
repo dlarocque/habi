@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"log"
 	"os"
 )
 
@@ -15,25 +16,33 @@ const (
 func main() {
 	args := os.Args
 
-	err := validateArguments(args)
-	if err != nil {
+	if err := validateArguments(args); err != nil {
 		fmt.Println(err)
 		return
 	}
-	parseArguments(args)
+	if err := parseArguments(args); err != nil {
+		fmt.Println(err)
+		return
+	}
 }
 
 func parseArguments(args []string) error {
+	var habitName string
 	action := args[1]
-	// habit := args[2]
 
-	if action == viewCommandName {
-		// ExecuteView()
-		// ExecuteView(habit)
-	} else if action == trackCommandName {
-		// ExecuteView(habit)
+	if action == trackCommandName {
+		habitName = args[2]
+		trackHabit(habitName)
 	} else if action == logCommandName {
-		// ExecuteLog(habit)
+		habitName = args[2]
+		logHabit(habitName)
+	} else if action == viewCommandName {
+		if len(args) == 3 {
+			habitName = args[2]
+			viewHabit(habitName)
+		} else {
+			viewAllHabits()
+		}
 	}
 
 	return nil
@@ -44,4 +53,23 @@ func validateArguments(args []string) error {
 		return errors.New("Invalid arguments")
 	}
 	return nil
+}
+
+func trackHabit(habitName string) {
+	log.Printf("Tracking habit: %s", habitName)
+}
+
+func logHabit(habitName string) {
+	log.Printf("Logging habit: %s", habitName)
+
+}
+
+func viewHabit(habitName string) {
+	log.Printf("Viewing habit: %s", habitName)
+
+}
+
+func viewAllHabits() {
+	log.Printf("Viewing all habits")
+
 }
