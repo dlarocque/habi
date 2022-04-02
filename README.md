@@ -1,6 +1,5 @@
-# habi
+# habi (WIP)
 
-** Pre-Beta **
 
 habi is a command line habit tracking app that prioritizes quick usage.
 
