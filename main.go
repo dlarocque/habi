@@ -149,3 +149,15 @@ func (d Data) equalJson(other Data) bool {
 
 	return reflect.DeepEqual(jsonData, otherJsonData)
 }
+
+func (d Data) addHabit(habitName string) error {
+	// Don't do anything if the habit already exists
+	if _, ok := d.Habits[habitName]; ok {
+		log.Printf("Habit %s already exists", habitName)
+		return nil
+	}
+
+	var habit []string
+	d.Habits[habitName] = habit
+	return nil
+}
