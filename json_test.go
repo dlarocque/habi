@@ -47,18 +47,8 @@ func TestInitJsonData(t *testing.T) {
 		t.Errorf("Failed to initialize json data, %v", err)
 	}
 
-	templateData, err := json.MarshalIndent(templateJson, "", "    ")
-	if err != nil {
-		t.Error(err)
-	}
-
-	initData, err := json.MarshalIndent(initJson, "", "    ")
-	if err != nil {
-		t.Error(err)
-	}
-
-	if !reflect.DeepEqual(templateData, initData) {
-		t.Errorf("Initial json data does not match expected template json data")
+	if !initJson.equalJson(templateJson) {
+		t.Fail()
 	}
 
 	// InitJsonData writes the new data file template
@@ -66,8 +56,9 @@ func TestInitJsonData(t *testing.T) {
 
 	if _, err := os.Stat(jsonDataPath); err != nil {
 		if errors.Is(err, os.ErrNotExist) {
-			t.Errorf("Initial json data not written to expected location: %s", jsonDataPath)
+			t.Fail()
 		} else {
+			// Check if the template was created
 
 		}
 	}
@@ -87,28 +78,18 @@ func TestGetJsonData(t *testing.T) {
 		t.Errorf("Failed to execute when JSON data does not exist")
 	}
 
-	data, err := json.MarshalIndent(jsonData, "", "    ")
-	if err != nil {
-		t.Error(err)
+	if !jsonData.equalJson(jsonTemplateData) {
+		t.Fail()
 	}
 
-	templateData, err := json.MarshalIndent(jsonTemplateData, "", "    ")
-	if err != nil {
-		t.Error(err)
-	}
-
-	if !reflect.DeepEqual(data, templateData) {
-		t.Errorf("Failed to correctly initialize JSON data when JSON data does not exist")
-	}
-
-	t.Log("Checking that if json data does exist, the json data is returned")
+	t.Log("Checking that if json data does exist, json data is returned")
 
 	jsonValidData, err := getJsonData(jsonValidDataPath)
 	if err != nil {
 		t.Errorf("Failed to get valid json data")
 	}
 
-	data, err = json.MarshalIndent(jsonValidData, "", "    ")
+	data, err := json.MarshalIndent(jsonValidData, "", "    ")
 	if err != nil {
 		t.Error(err)
 	}
@@ -123,7 +104,34 @@ func TestGetJsonData(t *testing.T) {
 	expectedData, _ = json.MarshalIndent(expectedJson, "", "    ")
 
 	if !reflect.DeepEqual(data, expectedData) {
-		t.Errorf("Failed to correctly retrieve JSON data when valid data does exist")
+		t.Fail()
+	}
+
+}
+
+func TestAddHabit(t *testing.T) {
+	templateJson, err := readAndUnmarshal(jsonTemplateDataPath)
+	if err != nil {
+		t.Error(err)
+	}
+
+	t.Log("Checking to see if new habit exists after adding it")
+	templateJson.addHabit("stretching")
+	if _, ok := templateJson.Habits["stretching"]; !ok {
+		t.Fail()
+	}
+
+	validJson, err := readAndUnmarshal(jsonValidDataPath)
+	if err != nil {
+		t.Error(err)
+	}
+
+	t.Log("Checking to see if an existing habit is overwritten when re-added")
+
+	validJson.addHabit("stretching")
+	pattern, ok := templateJson.Habits["stretching"]
+	if (ok && reflect.DeepEqual(pattern, [1]string{"1"})) || (!ok) {
+		t.Fail()
 	}
 
 }
