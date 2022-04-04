@@ -18,7 +18,9 @@ const (
 	jsonTemplateDataPath = "./data/template.json"
 )
 
-type Data map[string]interface{}
+type Data struct {
+	Habits map[string][]string
+}
 
 func main() {
 	args := os.Args
@@ -82,20 +84,20 @@ func viewAllHabits() {
 
 func getJsonData(filePath string) (Data, error) {
 	log.Printf("getting JSON data")
-	var jsonData map[string]interface{}
+	var jsonData Data
 	if _, err := os.Stat(filePath); err != nil {
 		if errors.Is(err, os.ErrNotExist) {
 			// data does not exist in expected directory, create it
 			return initJsonData()
 		} else {
-			return nil, err
+			return Data{}, err
 		}
 
 	}
 
 	jsonData, err := readAndUnmarshal(filePath)
 	if err != nil {
-		return nil, err
+		return Data{}, err
 	}
 
 	return jsonData, nil
@@ -105,16 +107,16 @@ func initJsonData() (Data, error) {
 	log.Printf("Initializing JSON data")
 	jsonTemplate, err := ioutil.ReadFile(jsonTemplateDataPath)
 	if err != nil {
-		return nil, err
+		return Data{}, err
 	}
 
 	if err := ioutil.WriteFile(jsonDataPath, jsonTemplate, 0644); err != nil {
-		return nil, err
+		return Data{}, err
 	}
 
 	var jsonData Data
 	if err = json.Unmarshal(jsonTemplate, &jsonData); err != nil {
-		return nil, err
+		return Data{}, err
 	}
 
 	return jsonData, nil
@@ -123,12 +125,12 @@ func initJsonData() (Data, error) {
 func readAndUnmarshal(filePath string) (Data, error) {
 	data, err := ioutil.ReadFile(filePath)
 	if err != nil {
-		return nil, err
+		return Data{}, err
 	}
 
 	var jsonData Data
 	if err = json.Unmarshal(data, &jsonData); err != nil {
-		return nil, err
+		return Data{}, err
 	}
 
 	return jsonData, nil
