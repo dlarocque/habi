@@ -15,7 +15,7 @@ var (
 
 func TestJsonEqual(t *testing.T) {
 	t.Log("Checking if newlines are compared")
-	var data1, data2 map[string]interface{}
+	var data1, data2 Data
 	jsonData1 := `{}
 	`
 	jsonData2 := `{}`
