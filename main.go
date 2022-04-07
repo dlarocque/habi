@@ -58,6 +58,9 @@ func parseArguments(args []string) error {
 		}
 	}
 
+	if err := data.marshalAndWrite(jsonDataPath); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -161,4 +164,17 @@ func (d Data) equalJson(other Data) bool {
 	}
 
 	return reflect.DeepEqual(jsonData, otherJsonData)
+}
+
+func (d Data) marshalAndWrite(fileName string) error {
+	bytes, err := json.MarshalIndent(d, "", "    ")
+	if err != nil {
+		return err
+	}
+
+	if err := ioutil.WriteFile(fileName, bytes, 0644); err != nil {
+		return err
+	}
+
+	return nil
 }
