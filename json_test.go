@@ -109,15 +109,16 @@ func TestGetJsonData(t *testing.T) {
 
 }
 
-func TestAddHabit(t *testing.T) {
+func TestTrackHabit(t *testing.T) {
+	habitName := "stretching"
 	templateJson, err := readAndUnmarshal(jsonTemplateDataPath)
 	if err != nil {
 		t.Error(err)
 	}
 
 	t.Log("Checking to see if new habit exists after adding it")
-	templateJson.addHabit("stretching")
-	if _, ok := templateJson.Habits["stretching"]; !ok {
+	templateJson.trackHabit(habitName)
+	if _, ok := templateJson.Habits[habitName]; !ok {
 		t.Fail()
 	}
 
@@ -128,9 +129,9 @@ func TestAddHabit(t *testing.T) {
 
 	t.Log("Checking to see if an existing habit is overwritten when re-added")
 
-	validJson.addHabit("stretching")
-	pattern, ok := templateJson.Habits["stretching"]
-	if (ok && reflect.DeepEqual(pattern, [1]string{"1"})) || (!ok) {
+	validJson.trackHabit(habitName)
+	pattern, ok := validJson.Habits[habitName]
+	if (ok && !reflect.DeepEqual(pattern, []string{"test"})) || (!ok) {
 		t.Fail()
 	}
 
