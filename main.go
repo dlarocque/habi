@@ -38,10 +38,14 @@ func main() {
 func parseArguments(args []string) error {
 	var habitName string
 	action := args[1]
+	data, err := getJsonData(jsonDataPath)
+	if err != nil {
+		return err
+	}
 
 	if action == trackCommandName {
 		habitName = args[2]
-		trackHabit(habitName)
+		data.trackHabit(habitName)
 	} else if action == logCommandName {
 		habitName = args[2]
 		logHabit(habitName)
@@ -64,8 +68,17 @@ func validateArguments(args []string) error {
 	return nil
 }
 
-func trackHabit(habitName string) {
+func (d Data) trackHabit(habitName string) {
 	log.Printf("Tracking habit: %s", habitName)
+
+	// Don't do anything if the habit already exists
+	if _, ok := d.Habits[habitName]; ok {
+		log.Printf("Habit %s already exists", habitName)
+		return
+	}
+
+	var habit []string
+	d.Habits[habitName] = habit
 }
 
 func logHabit(habitName string) {
@@ -148,16 +161,4 @@ func (d Data) equalJson(other Data) bool {
 	}
 
 	return reflect.DeepEqual(jsonData, otherJsonData)
-}
-
-func (d Data) addHabit(habitName string) error {
-	// Don't do anything if the habit already exists
-	if _, ok := d.Habits[habitName]; ok {
-		log.Printf("Habit %s already exists", habitName)
-		return nil
-	}
-
-	var habit []string
-	d.Habits[habitName] = habit
-	return nil
 }
