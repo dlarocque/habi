@@ -10,7 +10,8 @@ import (
 )
 
 var (
-	jsonValidDataPath = "./testdata/valid.json"
+	jsonValidDataPath      = "./testdata/valid.json"
+	jsonValidHabitDataPath = "./testdata/validhabit.json"
 )
 
 func TestJsonEqual(t *testing.T) {
@@ -122,16 +123,17 @@ func TestTrackHabit(t *testing.T) {
 		t.Fail()
 	}
 
-	validJson, err := readAndUnmarshal(jsonValidDataPath)
+	validJson, err := readAndUnmarshal(jsonValidHabitDataPath)
 	if err != nil {
 		t.Error(err)
 	}
 
 	t.Log("Checking to see if an existing habit is overwritten when re-added")
 
+	prevHabitPattern := validJson.Habits[habitName]
 	validJson.trackHabit(habitName)
 	pattern, ok := validJson.Habits[habitName]
-	if (ok && !reflect.DeepEqual(pattern, []string{"test"})) || (!ok) {
+	if (ok && !reflect.DeepEqual(pattern, prevHabitPattern)) || (!ok) {
 		t.Fail()
 	}
 

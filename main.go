@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"reflect"
+	"time"
 )
 
 const (
@@ -19,7 +20,7 @@ const (
 )
 
 type Data struct {
-	Habits map[string][]string
+	Habits map[string][]time.Time
 }
 
 func main() {
@@ -48,7 +49,7 @@ func parseArguments(args []string) error {
 		data.trackHabit(habitName)
 	} else if action == logCommandName {
 		habitName = args[2]
-		logHabit(habitName)
+		data.logHabit(habitName)
 	} else if action == viewCommandName {
 		if len(args) == 3 {
 			habitName = args[2]
@@ -80,13 +81,12 @@ func (d Data) trackHabit(habitName string) {
 		return
 	}
 
-	var habit []string
+	var habit []time.Time
 	d.Habits[habitName] = habit
 }
 
 func logHabit(habitName string) {
-	log.Printf("Logging habit: %s", habitName)
-
+	log.Printf("Logging %s", habitName)
 }
 
 func viewHabit(habitName string) {
@@ -99,7 +99,7 @@ func viewAllHabits() {
 }
 
 func getJsonData(filePath string) (Data, error) {
-	log.Printf("getting JSON data")
+	log.Printf("getting JSON data at %s", filePath)
 	var jsonData Data
 	if _, err := os.Stat(filePath); err != nil {
 		if errors.Is(err, os.ErrNotExist) {
