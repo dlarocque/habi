@@ -85,8 +85,32 @@ func (d Data) trackHabit(habitName string) {
 	d.Habits[habitName] = habit
 }
 
-func logHabit(habitName string) {
+func (d Data) logHabit(habitName string) {
 	log.Printf("Logging %s", habitName)
+
+	pattern, ok := d.Habits[habitName]
+	if !ok {
+		log.Printf("Failed to log %s as it is not being tracked\n", habitName)
+		log.Printf("To begin tracking %s, use habi track %s", habitName, habitName)
+		return
+	}
+
+	todaysDate := time.Now()
+	if len(pattern) > 0 {
+		mostRecentDate := pattern[len(pattern)-1]
+		mostRecentYear, mostRecentMonth, mostRecentDay := mostRecentDate.Date()
+
+		currentYear, currentMonth, currentDay := todaysDate.Date()
+		if (currentYear == mostRecentYear) &&
+			(currentMonth == mostRecentMonth) &&
+			(currentDay == mostRecentDay) {
+			log.Printf("Already logged %s today!", habitName)
+			return
+		}
+	}
+
+	updatedPattern := append(pattern, todaysDate)
+	d.Habits[habitName] = updatedPattern
 }
 
 func viewHabit(habitName string) {
