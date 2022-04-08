@@ -7,6 +7,7 @@ import (
 	"os"
 	"reflect"
 	"testing"
+	"time"
 )
 
 var (
@@ -137,4 +138,52 @@ func TestTrackHabit(t *testing.T) {
 		t.Fail()
 	}
 
+}
+
+func TestLogHabit(t *testing.T) {
+	habitName := "stretching"
+
+	t.Log("Checking to see if a habit is logged if the habit is not being tracked")
+	templateJson, err := readAndUnmarshal(jsonTemplateDataPath)
+	if err != nil {
+		t.Errorf("Failed to get valid json data")
+	}
+
+	templateJson.logHabit(habitName)
+	if _, ok := templateJson.Habits[habitName]; ok {
+		t.Fail()
+	}
+
+	t.Log("Checking to see if a habit is updated if the habit has not been updated today")
+	validJson, err := readAndUnmarshal(jsonValidDataPath)
+	if err != nil {
+		t.Errorf("Failed to get valid json data")
+	}
+
+	prevNumLogs := len(validJson.Habits[habitName])
+	validJson.logHabit(habitName)
+	numLogs := len(validJson.Habits[habitName])
+	if numLogs == 0 || numLogs-prevNumLogs != 1 {
+		t.Fail()
+	}
+	year, month, day := time.Now().Date()
+	pattern := validJson.Habits[habitName]
+	pYear, pMonth, pDay := pattern[len(pattern)-1].Date()
+	if (year != pYear) || (month != pMonth) || (day != pDay) {
+		t.Fail()
+	}
+
+	t.Log("Checking to see if a habit is updated if the habit has already been updated today")
+	validJson, err = readAndUnmarshal(jsonValidDataPath)
+	if err != nil {
+		t.Errorf("Failed to get valid json data")
+	}
+
+	prevNumLogs = len(validJson.Habits[habitName])
+	validJson.logHabit(habitName)
+	validJson.logHabit(habitName)
+	numLogs = len(validJson.Habits[habitName])
+	if numLogs-prevNumLogs > 1 {
+		t.Fail()
+	}
 }
