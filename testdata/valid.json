@@ -1,7 +1,5 @@
 {
-    "habits": {
-        "stretching": [
-            "test"
-        ]
+    "Habits": {
+        "stretching": null 
     }
 }
