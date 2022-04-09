@@ -3,12 +3,13 @@ package main
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
 	"reflect"
 	"time"
+
+	"github.com/dlarocque/habi/cmd"
 )
 
 const (
@@ -24,16 +25,7 @@ type Data struct {
 }
 
 func main() {
-	args := os.Args
-
-	if err := validateArguments(args); err != nil {
-		fmt.Println(err)
-		return
-	}
-	if err := parseArguments(args); err != nil {
-		fmt.Println(err)
-		return
-	}
+	cmd.Execute()
 }
 
 func parseArguments(args []string) error {
