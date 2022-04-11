@@ -7,12 +7,6 @@ import (
 	"github.com/dlarocque/habi/internal/data"
 )
 
-const (
-	viewCommandName  = "view"
-	trackCommandName = "track"
-	logCommandName   = "log"
-)
-
 func trackHabit(jsonData data.Data, habitName string) error {
 	log.Printf("Tracking habit: %s", habitName)
 
