@@ -13,12 +13,8 @@ const (
 	logCommandName   = "log"
 )
 
-func trackHabit(habitName string) error {
+func trackHabit(jsonData data.Data, habitName string) error {
 	log.Printf("Tracking habit: %s", habitName)
-	jsonData, err := data.GetJsonData(data.JsonDataPath)
-	if err != nil {
-		return err
-	}
 
 	// Don't do anything if the habit already exists
 	if _, ok := jsonData.Habits[habitName]; ok {
@@ -31,12 +27,8 @@ func trackHabit(habitName string) error {
 	return nil
 }
 
-func logHabit(habitName string) error {
+func logHabit(jsonData data.Data, habitName string) error {
 	log.Printf("Logging %s", habitName)
-	jsonData, err := data.GetJsonData(data.JsonDataPath)
-	if err != nil {
-		return err
-	}
 
 	pattern, ok := jsonData.Habits[habitName]
 	if !ok {
