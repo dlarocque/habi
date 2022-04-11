@@ -1,28 +1,19 @@
 package main
 
 import (
-	"encoding/json"
 	"errors"
-	"io/ioutil"
 	"log"
-	"os"
-	"reflect"
 	"time"
 
 	"github.com/dlarocque/habi/cmd"
+	"github.com/dlarocque/habi/internal/data"
 )
 
 const (
-	viewCommandName      = "view"
-	trackCommandName     = "track"
-	logCommandName       = "log"
-	jsonDataPath         = "./data/data.json"
-	jsonTemplateDataPath = "./data/template.json"
+	viewCommandName  = "view"
+	trackCommandName = "track"
+	logCommandName   = "log"
 )
-
-type Data struct {
-	Habits map[string][]time.Time
-}
 
 func main() {
 	cmd.Execute()
@@ -31,17 +22,17 @@ func main() {
 func parseArguments(args []string) error {
 	var habitName string
 	action := args[1]
-	data, err := getJsonData(jsonDataPath)
+	jsonData, err := data.GetJsonData(data.JsonDataPath)
 	if err != nil {
 		return err
 	}
 
 	if action == trackCommandName {
 		habitName = args[2]
-		data.trackHabit(habitName)
+		jsonData.trackHabit(habitName) // Name collision
 	} else if action == logCommandName {
 		habitName = args[2]
-		data.logHabit(habitName)
+		jsonData.logHabit(habitName) // Name collision
 	} else if action == viewCommandName {
 		if len(args) == 3 {
 			habitName = args[2]
@@ -51,7 +42,7 @@ func parseArguments(args []string) error {
 		}
 	}
 
-	if err := data.marshalAndWrite(jsonDataPath); err != nil {
+	if err := jsonData.MarshalAndWrite(data.JsonDataPath); err != nil {
 		return err
 	}
 	return nil
@@ -64,7 +55,7 @@ func validateArguments(args []string) error {
 	return nil
 }
 
-func (d Data) trackHabit(habitName string) {
+func (d data.Data) trackHabit(habitName string) {
 	log.Printf("Tracking habit: %s", habitName)
 
 	// Don't do anything if the habit already exists
@@ -112,85 +103,4 @@ func viewHabit(habitName string) {
 
 func viewAllHabits() {
 	log.Printf("Viewing all habits")
-}
-
-func getJsonData(filePath string) (Data, error) {
-	log.Printf("getting JSON data at %s", filePath)
-	var jsonData Data
-	if _, err := os.Stat(filePath); err != nil {
-		if errors.Is(err, os.ErrNotExist) {
-			// data does not exist in expected directory, create it
-			return initJsonData()
-		} else {
-			return Data{}, err
-		}
-
-	}
-
-	jsonData, err := readAndUnmarshal(filePath)
-	if err != nil {
-		return Data{}, err
-	}
-
-	return jsonData, nil
-}
-
-func initJsonData() (Data, error) {
-	log.Printf("Initializing JSON data")
-	jsonTemplate, err := ioutil.ReadFile(jsonTemplateDataPath)
-	if err != nil {
-		return Data{}, err
-	}
-
-	if err := ioutil.WriteFile(jsonDataPath, jsonTemplate, 0644); err != nil {
-		return Data{}, err
-	}
-
-	var jsonData Data
-	if err = json.Unmarshal(jsonTemplate, &jsonData); err != nil {
-		return Data{}, err
-	}
-
-	return jsonData, nil
-}
-
-func readAndUnmarshal(filePath string) (Data, error) {
-	data, err := ioutil.ReadFile(filePath)
-	if err != nil {
-		return Data{}, err
-	}
-
-	var jsonData Data
-	if err = json.Unmarshal(data, &jsonData); err != nil {
-		return Data{}, err
-	}
-
-	return jsonData, nil
-}
-
-func (d Data) equalJson(other Data) bool {
-	jsonData, err := json.MarshalIndent(d, "", "    ")
-	if err != nil {
-		return false
-	}
-
-	otherJsonData, err := json.MarshalIndent(other, "", "    ")
-	if err != nil {
-		return false
-	}
-
-	return reflect.DeepEqual(jsonData, otherJsonData)
-}
-
-func (d Data) marshalAndWrite(fileName string) error {
-	bytes, err := json.MarshalIndent(d, "", "    ")
-	if err != nil {
-		return err
-	}
-
-	if err := ioutil.WriteFile(fileName, bytes, 0644); err != nil {
-		return err
-	}
-
-	return nil
 }
