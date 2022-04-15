@@ -6,13 +6,15 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"path/filepath"
 	"reflect"
 	"time"
 )
 
 var (
-	JsonDataPath         = "./data/data.json"
-	JsonTemplateDataPath = "./data/template.json"
+	rootPath             = "../.."
+	JsonDataPath         = filepath.Join(rootPath, "data/data.json")
+	JsonTemplateDataPath = filepath.Join(rootPath, "data/template.json")
 )
 
 type Data struct {
