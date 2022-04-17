@@ -20,7 +20,6 @@ var (
 )
 
 func TestJsonEqual(t *testing.T) {
-	t.Log("Checking if newlines are compared")
 	var data1, data2 Data
 	jsonData1 := `{}
 	`
@@ -35,14 +34,12 @@ func TestJsonEqual(t *testing.T) {
 	}
 
 	if !Data(data1).EqualJson(Data(data2)) {
-		t.Fail()
+		t.Errorf("New lines were used in the comparison of two files")
 	}
 
 }
 
 func TestInitJsonData(t *testing.T) {
-	t.Log("Checking if InitJsonData returns the json data template")
-
 	templateJson, err := GetJsonData(jsonTemplateDataPath)
 	if err != nil {
 		t.Errorf("Failed to get json template data, %v", err)
@@ -54,25 +51,20 @@ func TestInitJsonData(t *testing.T) {
 	}
 
 	if !initJson.EqualJson(templateJson) {
-		t.Fail()
+		t.Errorf("InitJsonData not return the json data template")
 	}
-
-	// InitJsonData writes the new data file template
-	t.Log("Checking if InitJsonData writes the new data file template")
 
 	if _, err := os.Stat(filepath.Join(JsonDataPath)); err != nil {
 		if errors.Is(err, os.ErrNotExist) {
 			t.Fail()
+			t.Errorf("InitJson does not write the new data file template")
 		} else {
 			// Check if the template was created
-
 		}
 	}
 }
 
 func TestGetJsonData(t *testing.T) {
-	t.Log("Checking that if json data does not exist, the template is generated and returned")
-
 	jsonTemplateData, err := GetJsonData(jsonTemplateDataPath)
 	if err != nil {
 		t.Errorf("Failed to get json template data")
@@ -85,10 +77,8 @@ func TestGetJsonData(t *testing.T) {
 	}
 
 	if !jsonData.EqualJson(jsonTemplateData) {
-		t.Fail()
+		t.Errorf("Json data template is not returned when data does not exist")
 	}
-
-	t.Log("Checking that if json data does exist, json data is returned")
 
 	jsonValidData, err := GetJsonData(jsonValidDataPath)
 	if err != nil {
@@ -110,7 +100,7 @@ func TestGetJsonData(t *testing.T) {
 	expectedData, _ = json.MarshalIndent(expectedJson, "", "    ")
 
 	if !reflect.DeepEqual(data, expectedData) {
-		t.Fail()
+		t.Errorf("GetJsonData does not return the existing data when it does exist.")
 	}
 
 }
