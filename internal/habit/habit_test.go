@@ -25,10 +25,9 @@ func TestTrackHabit(t *testing.T) {
 		t.Error(err)
 	}
 
-	t.Log("Checking to see if new habit exists after adding it")
 	trackHabit(templateJson, habitName)
 	if _, ok := templateJson.Habits[habitName]; !ok {
-		t.Fail()
+		t.Errorf("trackHabit does not add a new habit to the data")
 	}
 
 	validJson, err := data.ReadAndUnmarshal(jsonValidHabitDataPath)
@@ -36,13 +35,12 @@ func TestTrackHabit(t *testing.T) {
 		t.Error(err)
 	}
 
-	t.Log("Checking to see if an existing habit is overwritten when re-added")
-
 	prevHabitPattern := validJson.Habits[habitName]
 	trackHabit(validJson, habitName)
 	pattern, ok := validJson.Habits[habitName]
 	if (ok && !reflect.DeepEqual(pattern, prevHabitPattern)) || (!ok) {
 		t.Fail()
+		t.Errorf("trackHabit overwrites existing habit data when a habit is re-added")
 	}
 
 }
@@ -50,7 +48,6 @@ func TestTrackHabit(t *testing.T) {
 func TestLogHabit(t *testing.T) {
 	habitName := "stretching"
 
-	t.Log("Checking to see if a habit is logged if the habit is not being tracked")
 	templateJson, err := data.ReadAndUnmarshal(jsonTemplateDataPath)
 	if err != nil {
 		t.Errorf("Failed to get valid json data")
@@ -59,9 +56,9 @@ func TestLogHabit(t *testing.T) {
 	logHabit(templateJson, habitName)
 	if _, ok := templateJson.Habits[habitName]; ok {
 		t.Fail()
+		t.Errorf("logHabit still tracks a habit if it does not exist")
 	}
 
-	t.Log("Checking to see if a habit is updated if the habit has not been updated today")
 	validJson, err := data.ReadAndUnmarshal(jsonValidDataPath)
 	if err != nil {
 		t.Errorf("Failed to get valid json data")
@@ -71,16 +68,15 @@ func TestLogHabit(t *testing.T) {
 	logHabit(validJson, habitName)
 	numLogs := len(validJson.Habits[habitName])
 	if numLogs == 0 || numLogs-prevNumLogs != 1 {
-		t.Fail()
+		t.Errorf("logHabit does not a log a habit if it has not yet been done today")
 	}
 	year, month, day := time.Now().Date()
 	pattern := validJson.Habits[habitName]
 	pYear, pMonth, pDay := pattern[len(pattern)-1].Date()
 	if (year != pYear) || (month != pMonth) || (day != pDay) {
-		t.Fail()
+		t.Errorf("logHabit does not log a habit if it has not yet been done today")
 	}
 
-	t.Log("Checking to see if a habit is updated if the habit has already been updated today")
 	validJson, err = data.ReadAndUnmarshal(jsonValidDataPath)
 	if err != nil {
 		t.Errorf("Failed to get valid json data")
@@ -92,5 +88,6 @@ func TestLogHabit(t *testing.T) {
 	numLogs = len(validJson.Habits[habitName])
 	if numLogs-prevNumLogs > 1 {
 		t.Fail()
+		t.Errorf("logHabit allows a habit to log a habit twice in the same day, it should not")
 	}
 }
