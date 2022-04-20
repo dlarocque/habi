@@ -10,12 +10,12 @@ import (
 )
 
 var (
-	// TODO: Make these not as highly coupled with the file paths
-	dataPath               = "../../data/"
+	absRootPath, _         = filepath.Abs("../..")
+	absPkgPath, _          = filepath.Abs("")
 	testDataPath           = "testdata"
-	jsonTemplateDataPath   = filepath.Join(dataPath, "template.json")
-	jsonValidDataPath      = filepath.Join(testDataPath, "valid.json")
-	jsonValidHabitDataPath = filepath.Join(testDataPath, "validhabit.json")
+	jsonTemplateDataPath   = filepath.Join(absRootPath, data.DataPath, "template.json")
+	jsonValidDataPath      = filepath.Join(absPkgPath, testDataPath, "valid.json")
+	jsonValidHabitDataPath = filepath.Join(absPkgPath, testDataPath, "validhabit.json")
 )
 
 func TestTrackHabit(t *testing.T) {

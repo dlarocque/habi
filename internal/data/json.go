@@ -12,12 +12,12 @@ import (
 )
 
 var (
-	rootPath             = "../.."
+	absRootPath, _       = filepath.Abs("../..")
 	JsonDataFileName     = "data.json"
 	JsonTemplateFileName = "template.json"
 	DataPath             = "data"
-	jsonDataPath         = filepath.Join(rootPath, DataPath, JsonDataFileName)
-	jsonTemplateDataPath = filepath.Join(rootPath, DataPath, "template.json")
+	jsonDataPath         = filepath.Join(absRootPath, DataPath, JsonDataFileName)
+	jsonTemplateDataPath = filepath.Join(absRootPath, DataPath, "template.json")
 )
 
 type Data struct {
