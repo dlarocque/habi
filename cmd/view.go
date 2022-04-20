@@ -17,6 +17,7 @@ var viewCmd = &cobra.Command{
 	Long: `Shows which days habits were logged since tracking began.
 Patterns can be viewed for a single habit or all habits at once.`,
 	Run: func(cmd *cobra.Command, args []string) {
+		// TODO: Implement
 		fmt.Println("view called")
 	},
 }

@@ -1,8 +1,10 @@
 package cmd
 
 import (
-	"fmt"
+	"path/filepath"
 
+	"github.com/dlarocque/habi/internal/data"
+	"github.com/dlarocque/habi/internal/habit"
 	"github.com/spf13/cobra"
 )
 
@@ -13,7 +15,13 @@ var trackCmd = &cobra.Command{
 	Long: `Begins tracking habit patterns for a new habit, that can be viewed with the view command.
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("track called")
+		dataPath := filepath.Join("..", data.DataPath, data.JsonDataFileName)
+		data, err := data.GetJsonData(dataPath)
+		if err != nil {
+			panic(err) // TODO: Should not manually invoke a panic
+		}
+
+		habit.TrackHabit(data, args[0])
 	},
 }
 
