@@ -2,17 +2,21 @@ package cmd
 
 import (
 	"os"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 )
 
 // rootCmd represents the base command when called without any subcommands
-var rootCmd = &cobra.Command{
-	Use:   "habi",
-	Short: "A command line habit tracking app that prioritizes quick usage.",
-	Long: `habi allows users to quickly track new habits, log when they've completed a habit 
+var (
+	absRootPath, _ = filepath.Abs(".")
+	rootCmd        = &cobra.Command{
+		Use:   "habi",
+		Short: "A command line habit tracking app that prioritizes quick usage.",
+		Long: `habi allows users to quickly track new habits, log when they've completed a habit 
 	for the day, as well as get an overview of their habit patterns over time.`,
-}
+	}
+)
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
