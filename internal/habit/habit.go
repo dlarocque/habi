@@ -7,7 +7,7 @@ import (
 	"github.com/dlarocque/habi/internal/data"
 )
 
-func trackHabit(jsonData data.Data, habitName string) error {
+func TrackHabit(jsonData data.Data, habitName string) error {
 	log.Printf("Tracking habit: %s", habitName)
 
 	// Don't do anything if the habit already exists
@@ -21,7 +21,7 @@ func trackHabit(jsonData data.Data, habitName string) error {
 	return nil
 }
 
-func logHabit(jsonData data.Data, habitName string) error {
+func LogHabit(jsonData data.Data, habitName string) error {
 	log.Printf("Logging %s", habitName)
 
 	pattern, ok := jsonData.Habits[habitName]
@@ -50,11 +50,11 @@ func logHabit(jsonData data.Data, habitName string) error {
 	return nil
 }
 
-func viewHabit(habitName string) {
+func ViewHabit(habitName string) {
 	log.Printf("Viewing habit: %s", habitName)
 
 }
 
-func viewAllHabits() {
+func ViewAllHabits() {
 	log.Printf("Viewing all habits")
 }
