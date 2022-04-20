@@ -13,8 +13,6 @@ import (
 var (
 	// TODO: Make these not as highly coupled with the file paths
 	testDataPath           = "testdata"
-	dataPath               = filepath.Join(rootPath, "data/")
-	jsonTemplateDataPath   = filepath.Join(dataPath, "template.json")
 	jsonValidDataPath      = filepath.Join(testDataPath, "valid.json")
 	jsonValidHabitDataPath = filepath.Join(testDataPath, "validhabit.json")
 )
@@ -54,7 +52,7 @@ func TestInitJsonData(t *testing.T) {
 		t.Errorf("InitJsonData not return the json data template")
 	}
 
-	if _, err := os.Stat(filepath.Join(JsonDataPath)); err != nil {
+	if _, err := os.Stat(filepath.Join(jsonDataPath)); err != nil {
 		if errors.Is(err, os.ErrNotExist) {
 			t.Fail()
 			t.Errorf("InitJson does not write the new data file template")

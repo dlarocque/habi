@@ -13,8 +13,11 @@ import (
 
 var (
 	rootPath             = "../.."
-	JsonDataPath         = filepath.Join(rootPath, "data/data.json")
-	JsonTemplateDataPath = filepath.Join(rootPath, "data/template.json")
+	JsonDataFileName     = "data.json"
+	JsonTemplateFileName = "template.json"
+	DataPath             = "data"
+	jsonDataPath         = filepath.Join(rootPath, DataPath, JsonDataFileName)
+	jsonTemplateDataPath = filepath.Join(rootPath, DataPath, "template.json")
 )
 
 type Data struct {
@@ -44,12 +47,12 @@ func GetJsonData(filePath string) (Data, error) {
 
 func InitJsonData() (Data, error) {
 	log.Printf("Initializing JSON data")
-	jsonTemplate, err := ioutil.ReadFile(JsonTemplateDataPath)
+	jsonTemplate, err := ioutil.ReadFile(jsonTemplateDataPath)
 	if err != nil {
 		return Data{}, err
 	}
 
-	if err := ioutil.WriteFile(JsonDataPath, jsonTemplate, 0644); err != nil {
+	if err := ioutil.WriteFile(jsonDataPath, jsonTemplate, 0644); err != nil {
 		return Data{}, err
 	}
 
