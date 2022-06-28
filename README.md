@@ -1,4 +1,4 @@
-# habi (WIP)
+# habi (Work In Progress)
 
 
 habi is a command line habit tracking app that prioritizes quick usage.
